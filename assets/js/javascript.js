@@ -2,38 +2,90 @@
 var apiKey = "0d8e5cef9f1f9a5bc040c48374da619f";
 var pastSearches = [];
 
+$("#citySearch").on("click", function() {
+    runSearch();
+});
 
-// function displayWeather() {
+function runSearch() {
     
-//     var queryURL = "https://api.openweathermap.org/data/2.5/weather?q=" + "London" + "&appid=" + apiKey;
-   
-//     $.ajax({
-//         url: queryURL,
-//         method: "GET"
-//     }).then(function(response) {
-//         var temperature = response.main.temp;
-//         console.log(response.main.temp);
-//     });
-// }
+    event.preventDefault();
+    var searchTerm = $("#cityName").val().trim();
+    var queryURLcity = "https://api.openweathermap.org/data/2.5/weather?q=" + searchTerm + "&units=imperial&appid=" + apiKey;
+    var queryURLfiveday = "https://api.openweathermap.org/data/2.5/forecast?q=" + searchTerm + "&units=imperial&appid=" + apiKey;
+    var queryURLuv = "https://api.openweathermap.org/data/2.5/uvi?appid=" + apiKey;
+    var resultLon;
+    var resultLat;
+    
+    $.ajax({
+        url: queryURLcity,
+        method: "GET"
+    }).then(function(response) {
+        console.log(response);
+        $("#weather-info").empty();
+        var displayTemp = response.main.temp;
+        var displayHumid = response.main.humidity;
+        var displayWind = response.wind.speed;
+        resultLon = response.coord.lon; 
+        resultLat = response.coord.lat;
+        pastSearches.push(searchTerm);
+        renderHistory();
+        var currentDate = new Date();
+        var currentMonth = currentDate.getMonth()+1;
+        var currentDay = currentDate.getDate();
+        var currentYear = currentDate.getFullYear();
+        var currentDisplay = currentMonth + "/" + currentDay + "/" + currentYear;
+        $("#cityhead").text(response.name + " (" + currentDisplay + ")");
+        var iconCode = response.weather[0].icon;
+        var displayIcon = "https://openweathermap.org/img/wn/" + iconCode + ".png";
+        console.log(displayIcon);
+        $("#weather-icon").attr("src", displayIcon);
+        $("#weather-info").append("Temperature: " + displayTemp + " °F" + "<br>");
+        $("#weather-info").append("Humidity: " + displayHumid + "%" + "<br>");
+        $("#weather-info").append("Wind Speed: " + displayWind + " MPH" + "<br>");
+        $.ajax({
+            url: queryURLuv.concat("&lat=",resultLat,"&lon=",resultLon),
+            method: "GET"
+        }).then(function(response) {
+            $("#weather-info").append("UV Index: " + response.value);
+        });
+    });
+    $.ajax({
+        url:queryURLfiveday,
+        method:"GET"
+    }).then(function(response) {
+        console.log(response);
+        $("#five-day").empty();
+        $("#five-day-title").empty();
+        $("#five-day-title").append("Five-Day Forecast");
+        for (i=5; i<38; i+=8) {
+            var fiveDay = $("<p>");
+            var dateDisplay = response.list[i].dt_txt;
+            dateDisplay = dateDisplay.split(" ");
+            dateDisplay = dateDisplay[0].split("-");
+            fiveDay.append("Date: " + dateDisplay[1] + "/" + dateDisplay[2] + "/" + dateDisplay[0] + "<br>");
+            fiveDay.append("Temp: " + response.list[i].main.temp + " °F" + "<br>");
+            fiveDay.append("Humidity: " + response.list[i].main.humidity + "%");
+            $("#five-day").append(fiveDay);
+        }
+    });
+}
 
 function renderHistory() {
     $("#searchHistory").empty();
     for(i=0; i<pastSearches.length; i++) {
+        var buttonList = $("<ul>");
         var historyButton = $("<button>");
-        historyButton.addClass("history-button");
+        historyButton.addClass("button history-button");
         historyButton.attr("data-name", pastSearches[i]);
         historyButton.text(pastSearches[i]);
-        $("#searchHistory").append(historyButton);
+        $(buttonList).append(historyButton);
+        $("#searchHistory").prepend("<br>");
+        $("#searchHistory").prepend(buttonList);   
     }
+    $(".history-button").on("click", function() {
+        console.log(newSearch);
+        $("#cityName").empty();
+        $("#cityName").text(newSearch);
+        runSearch();
+    });
 }
-
-$("#citySearch").on("click", function() {
-    event.preventDefault();
-    $("#searchHistory").empty();
-    var citySearch = $("#cityName").val().trim();
-    console.log(citySearch);
-    pastSearches.push(citySearch);
-    renderHistory();
-});
-
-//$(document).on("click", "#data-name", displayWeather);
