@@ -1,0 +1,83 @@
+body{
+    background: white;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
+header {
+    background: #0283FC;
+    color: white;
+    width: 100%;
+    padding: 0px;
+    margin: 0px;
+    border: 0px;
+    text-align: center;
+    font-size: 50px;
+}
+
+.container {
+    background: white;
+    padding: 0px;
+}
+
+#search-side {
+    background: darkgray;
+    padding: 25px;
+    padding-top: 15px;
+    font-size: 20px;
+    
+}
+
+#history-side {
+    background: darkgrey;
+    padding: 20px;
+    padding-left: 40px;
+    padding-right: 40px;
+}
+
+#fiveday-result {
+    background: darkgrey;
+    padding: 25px;
+}
+
+#final-result {
+    background: darkgrey;
+    padding: 25px;
+    padding-bottom: 5px;
+    padding-top: 20px;
+}
+
+#weather-info {
+    background: white;
+    padding: 25px;
+}
+
+#five-display {
+    background: white;
+    width: 19%;
+    padding: 25px;
+}
+
+#five-day {
+    border: 0px;
+    margin: 0px;
+    padding-left: 20px;
+}
+
+#cityhead {
+    color: white;
+    text-shadow: -1px 1px 0 #0283FC, 1px 1px 0 #0283FC, 1px -1px 0 #0283FC, -1px -1px 0 #0283FC;
+}
+
+#five-day-title {
+    color: white;
+    text-shadow: -1px 1px 0 #0283FC, 1px 1px 0 #0283FC, 1px -1px 0 #0283FC, -1px -1px 0 #0283FC;
+}
+
+#recent-search {
+    color: white;
+    text-shadow: -1px 1px 0 #0283FC, 1px 1px 0 #0283FC, 1px -1px 0 #0283FC, -1px -1px 0 #0283FC;
+}
+
+.btn-primary {
+
+}

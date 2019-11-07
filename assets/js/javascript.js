@@ -2,13 +2,19 @@
 var apiKey = "0d8e5cef9f1f9a5bc040c48374da619f";
 var pastSearches = [];
 
+
+$("#final-result").hide();
+$("#fiveday-result").hide();
+$("#history-side").hide();
 $("#citySearch").on("click", function() {
     runSearch();
 });
 
 function runSearch() {
-    
     event.preventDefault();
+    $("#final-result").show();
+    $("#fiveday-result").show();
+    $("#history-side").show();
     var searchTerm = $("#cityName").val().trim();
     var queryURLcity = "https://api.openweathermap.org/data/2.5/weather?q=" + searchTerm + "&units=imperial&appid=" + apiKey;
     var queryURLfiveday = "https://api.openweathermap.org/data/2.5/forecast?q=" + searchTerm + "&units=imperial&appid=" + apiKey;
@@ -39,9 +45,9 @@ function runSearch() {
         var displayIcon = "https://openweathermap.org/img/wn/" + iconCode + ".png";
         console.log(displayIcon);
         $("#weather-icon").attr("src", displayIcon);
-        $("#weather-info").append("Temperature: " + displayTemp + " °F" + "<br>");
-        $("#weather-info").append("Humidity: " + displayHumid + "%" + "<br>");
-        $("#weather-info").append("Wind Speed: " + displayWind + " MPH" + "<br>");
+        $("#weather-info").append("Temperature: " + displayTemp + " °F" + "<br>" + "<br>");
+        $("#weather-info").append("Humidity: " + displayHumid + "%" + "<br>" + "<br>");
+        $("#weather-info").append("Wind Speed: " + displayWind + " MPH" + "<br>" +"<br>");
         $.ajax({
             url: queryURLuv.concat("&lat=",resultLat,"&lon=",resultLon),
             method: "GET"
@@ -58,28 +64,35 @@ function runSearch() {
         $("#five-day-title").empty();
         $("#five-day-title").append("Five-Day Forecast");
         for (i=5; i<38; i+=8) {
-            var fiveDay = $("<p>");
+            var fiveDay = $("<li>");
+            fiveDay.addClass("list-inline-item rounded");
             var dateDisplay = response.list[i].dt_txt;
             dateDisplay = dateDisplay.split(" ");
             dateDisplay = dateDisplay[0].split("-");
-            fiveDay.append("Date: " + dateDisplay[1] + "/" + dateDisplay[2] + "/" + dateDisplay[0] + "<br>");
-            fiveDay.append("Temp: " + response.list[i].main.temp + " °F" + "<br>");
-            fiveDay.append("Humidity: " + response.list[i].main.humidity + "%");
+            fiveDay.attr("id", "five-display");
+            fiveDay.append(dateDisplay[1] + "/" + dateDisplay[2] + "/" + dateDisplay[0] + "<hr>");
+            var fiveDayIcon = "https://openweathermap.org/img/wn/" + response.list[i].weather[0].icon + ".png";
+            var fiveDayImg = $("<img>");
+            fiveDayImg.attr("src", fiveDayIcon);
+            fiveDay.append(fiveDayImg);
+            fiveDay.append("<br>" + "<br>" + "Temp: " + response.list[i].main.temp + " °F" + "<br>");
+            fiveDay.append("Humidity: " + response.list[i].main.humidity + "%" + "<br>");
             $("#five-day").append(fiveDay);
         }
+        $("#five-day").append("<br>");
     });
 }
 
 function renderHistory() {
     $("#searchHistory").empty();
     for(i=0; i<pastSearches.length; i++) {
-        var buttonList = $("<ul>");
+        var buttonList = $("<div>");
         var historyButton = $("<button>");
-        historyButton.addClass("button history-button");
+        historyButton.addClass("history-button btn-primary");
         historyButton.attr("data-name", pastSearches[i]);
         historyButton.text(pastSearches[i]);
         $(buttonList).append(historyButton);
-        $("#searchHistory").prepend("<br>");
+        $("#searchHistory").prepend("<hr>");
         $("#searchHistory").prepend(buttonList);   
     }
     $(".history-button").on("click", function() {
